@@ -30,7 +30,7 @@ jobs:
 
       # Build web app
       - name: Build web app
-        run: flutter build web --release --base-href "/e-business/"
+        run: flutter build web --release --base-href "/"
 
       # Deploy to GitHub Pages
       - name: Set up GitHub Pages
