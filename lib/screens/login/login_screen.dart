@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:leaddesk/screens/home/home_screen.dart';
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -29,7 +31,10 @@ class LoginScreen extends StatelessWidget {
                 decoration: InputDecoration(hintText: 'Password'),
               ),
               FilledButton(
-                onPressed: () => _notImplemented(context, 'Sign In'),
+                onPressed: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                ),
                 child: const Text('Sign In'),
               ),
               Row(
