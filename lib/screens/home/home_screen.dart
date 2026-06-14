@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
           NavigationDestination(
             selectedIcon: FaIcon(FontAwesomeIcons.house),
             icon: FaIcon(FontAwesomeIcons.house),
-            label: 'Home',
+            label: 'Dashboard',
           ),
           NavigationDestination(
             selectedIcon: FaIcon(FontAwesomeIcons.calendar),
