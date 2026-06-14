@@ -201,7 +201,7 @@ class _LeadsPageState extends State<LeadsPage> {
         borderRadius: BorderRadius.circular(11),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -302,7 +302,7 @@ class _LeadsPageState extends State<LeadsPage> {
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 20),
       itemCount: leads.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, i) => _LeadCard(
         lead: leads[i],
         onTap: () => _onLeadTap(leads[i]),
@@ -415,7 +415,7 @@ class _LeadCard extends StatelessWidget {
                               width: 22,
                               height: 22,
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.22),
+                                color: Colors.white.withValues(alpha: 0.22),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
@@ -442,7 +442,7 @@ class _LeadCard extends StatelessWidget {
                                     lead.email,
                                     style: TextStyle(
                                       fontSize: 10.5,
-                                      color: Colors.white.withOpacity(0.55),
+                                      color: Colors.white.withValues(alpha: 0.55),
                                       height: 1.3,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -517,7 +517,7 @@ class _ScoreBlock extends StatelessWidget {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w400,
-              color: Colors.white.withOpacity(0.65),
+              color: Colors.white.withValues(alpha: 0.65),
               letterSpacing: 0.3,
             ),
           ),
@@ -553,7 +553,7 @@ class _IndicatorDots extends StatelessWidget {
               width: r,
               height: r,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.28),
+                color: Colors.white.withValues(alpha: 0.28),
                 shape: BoxShape.circle,
               ),
             ),
@@ -590,9 +590,9 @@ class _ArrowBtn extends StatelessWidget {
       height: 32,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white.withOpacity(0.12),
+        color: Colors.white.withValues(alpha: 0.12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.35),
+          color: Colors.white.withValues(alpha: 0.35),
           width: 1,
         ),
       ),
