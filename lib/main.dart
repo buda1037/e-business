@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:leaddesk/database/database.dart';
+import 'package:leaddesk/database/seed_database.dart';
 import 'package:leaddesk/screens/splash/splash_screen.dart';
 
-void main() {
-  runApp(const MainApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final database = AppDatabase();
+
+  await DatabaseSeeder(database).seedIfNeeded();
+
+  runApp(MainApp(database: database));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final AppDatabase database;
+
+  const MainApp({
+    super.key,
+    required this.database,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: SplashScreen());
+    return MaterialApp(
+      home: SplashScreen(database: database),
+    );
   }
 }
