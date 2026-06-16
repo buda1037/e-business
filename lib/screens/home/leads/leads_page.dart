@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:leaddesk/database/database.dart';
+<<<<<<< HEAD
 import 'package:leaddesk/screens/home/leads/create_lead_page.dart';
 
+=======
+
+List<LeadCardData> _leads = [];
+
+>>>>>>> eae511c (Add database seed data and lead search filters)
 
 // ---------------------------------------------------------------------------
 // Design tokens – calibrated to Figma 375 px screen
