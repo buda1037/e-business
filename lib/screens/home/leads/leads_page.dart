@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leaddesk/database/database.dart';
+import 'package:leaddesk/screens/home/leads/create_lead_page.dart';
 
 List<LeadCardData> _leads = [];
 
@@ -158,7 +159,11 @@ Future<void> _loadSuggestions(String input) async {
   }
 
   void _onAddLead() {
-    // TODO: navigate to create lead screen
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const CreateLeadPage(),
+      ),
+    );
   }
 
   void _onLeadTap(LeadCardData leadData) {
