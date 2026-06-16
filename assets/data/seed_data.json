@@ -1,0 +1,190 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "firstName": "Ingrid",
+      "lastName": "Gant",
+      "email": "ingrid.gant@leaddesk.com",
+      "phoneNumber": "+491701111111",
+      "passwordHash": "mock_hash",
+      "passwordSalt": "mock_salt",
+      "managerId": null
+    },
+    {
+      "id": 2,
+      "firstName": "Alisa",
+      "lastName": "Knöbl",
+      "email": "alisa.knoebl@leaddesk.com",
+      "phoneNumber": "+491702222222",
+      "passwordHash": "mock_hash",
+      "passwordSalt": "mock_salt",
+      "managerId": 1
+    },
+    {
+      "id": 3,
+      "firstName": "Fiona",
+      "lastName": "Nitschmann",
+      "email": "fiona.nitschmann@leaddesk.com",
+      "phoneNumber": "+491703333333",
+      "passwordHash": "mock_hash",
+      "passwordSalt": "mock_salt",
+      "managerId": 1
+    },
+    {
+      "id": 4,
+      "firstName": "Kaltrina",
+      "lastName": "Jashari",
+      "email": "kaltrina.jashari@leaddesk.com",
+      "phoneNumber": "+491704444444",
+      "passwordHash": "mock_hash",
+      "passwordSalt": "mock_salt",
+      "managerId": 1
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "SAP Lizenz"
+    },
+    {
+      "id": 2,
+      "name": "SAP IBP Implementation"
+    },
+    {
+      "id": 3,
+      "name": "CRM Software"
+    },
+    {
+      "id": 4,
+      "name": "Analytics Dashboard"
+    }
+  ],
+  "tradeShows": [
+    {
+      "id": 1,
+      "name": "Cloud Fest",
+      "startDate": "2026-03-17",
+      "endDate": "2026-03-20",
+      "location": "Europa-Park Rust",
+      "description": "Cloud and hosting tradeshow"
+    },
+    {
+      "id": 2,
+      "name": "EuroShop",
+      "startDate": "2026-02-22",
+      "endDate": "2026-02-26",
+      "location": "Düsseldorf",
+      "description": "Retail and e-business tradeshow"
+    },
+    {
+      "id": 3,
+      "name": "DMEXCO",
+      "startDate": "2026-09-16",
+      "endDate": "2026-09-17",
+      "location": "Köln",
+      "description": "Digital marketing expo"
+    },
+    {
+      "id": 4,
+      "name": "Cloud Fest",
+      "startDate": "2025-03-18",
+      "endDate": "2025-03-21",
+      "location": "Europa-Park Rust",
+      "description": "Cloud and hosting tradeshow"
+    }
+  ],
+  "contacts": [
+    {
+      "id": 1,
+      "firstName": "Daniel",
+      "lastName": "Hook",
+      "email": "daniel.hook@technocraft.com",
+      "company": "Techno Craft"
+    },
+    {
+      "id": 2,
+      "firstName": "Jasan",
+      "lastName": "Mak",
+      "email": "jasan.mak@jesondh.de",
+      "company": "Jeson DH"
+    },
+    {
+      "id": 3,
+      "firstName": "Laura",
+      "lastName": "Schmidt",
+      "email": "laura.schmidt@sap.com",
+      "company": "SAP"
+    },
+    {
+      "id": 4,
+      "firstName": "Marius",
+      "lastName": "Weber",
+      "email": "marius.weber@retailcore.de",
+      "company": "RetailCore"
+    },
+    {
+      "id": 5,
+      "firstName": "Sofia",
+      "lastName": "Klein",
+      "email": "sofia.klein@cloudnova.com",
+      "company": "CloudNova"
+    }
+  ],
+  "leads": [
+    {
+      "contactId": 1,
+      "productId": 2,
+      "tradeShowId": 2,
+      "ownerId": 1,
+      "status": "converted",
+      "score": 9.5,
+      "volume": 1200000.0,
+      "notes": "Seemed interested in implementing the SAP IBP solution.",
+      "createdAt": "2026-02-23"
+    },
+    {
+      "contactId": 2,
+      "productId": 3,
+      "tradeShowId": 3,
+      "ownerId": 2,
+      "status": "newLead",
+      "score": 6.6,
+      "volume": 250000.0,
+      "notes": "Requested follow-up after the tradeshow.",
+      "createdAt": "2026-09-16"
+    },
+    {
+      "contactId": 3,
+      "productId": 1,
+      "tradeShowId": 1,
+      "ownerId": 1,
+      "status": "qualified",
+      "score": 8.2,
+      "volume": 750000.0,
+      "notes": "Interested in SAP licenses for internal rollout.",
+      "createdAt": "2026-03-18"
+    },
+    {
+      "contactId": 4,
+      "productId": 4,
+      "tradeShowId": 2,
+      "ownerId": 3,
+      "status": "lost",
+      "score": 4.1,
+      "volume": 90000.0,
+      "notes": "Budget too low for current solution.",
+      "createdAt": "2026-02-24"
+    },
+    {
+      "contactId": 5,
+      "productId": 3,
+      "tradeShowId": 4,
+      "ownerId": 4,
+      "status": "converted",
+      "score": 7.4,
+      "volume": 410000.0,
+      "notes": "Converted after Cloud Fest 2025 follow-up.",
+      "createdAt": "2025-03-19"
+    }
+  ]
+}

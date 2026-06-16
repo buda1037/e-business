@@ -4,8 +4,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:leaddesk/screens/home/home_screen.dart';
 
+import 'package:leaddesk/database/database.dart';
+
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final AppDatabase database;
+
+  const LoginScreen({
+    super.key,
+    required this.database,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +38,15 @@ class LoginScreen extends StatelessWidget {
                 decoration: InputDecoration(hintText: 'Password'),
               ),
               FilledButton(
-                onPressed: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomeScreen(database: database),
                 ),
-                child: const Text('Sign In'),
               ),
+              child: const Text('Sign In'),
+            ),
+                const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

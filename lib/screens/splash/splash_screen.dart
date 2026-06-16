@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
+import 'package:leaddesk/database/database.dart';
 import 'package:leaddesk/screens/login/login_screen.dart';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+  final AppDatabase database;
+
+  const SplashScreen({
+    super.key,
+    required this.database,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +18,9 @@ class SplashScreen extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: () => Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(database: database),
+        ),
         ),
         child: Center(
           child: Column(

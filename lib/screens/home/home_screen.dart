@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:leaddesk/database/database.dart';
 import 'package:leaddesk/screens/home/dashboard/dashboard_page.dart';
 import 'package:leaddesk/screens/home/leads/leads_page.dart';
 import 'package:leaddesk/screens/home/not-implemented/not_implemented_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final AppDatabase database;
+
+  const HomeScreen({
+    super.key,
+    required this.database,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,6 +23,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final pages = <Widget>[
+      const DashboardPage(),
+      const NotImplementedPage(),
+      LeadsPage(database: widget.database),
+      const NotImplementedPage(),
+    ];
+
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -49,12 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: <Widget>[
-        const DashboardPage(),
-        const NotImplementedPage(),
-        const LeadsPage(),
-        const NotImplementedPage(),
-      ][currentPageIndex],
+      body: pages[currentPageIndex],
     );
   }
 }

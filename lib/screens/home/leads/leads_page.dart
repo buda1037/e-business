@@ -1,49 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:leaddesk/database/database.dart';
 
-// ---------------------------------------------------------------------------
-// Mock data model
-// ---------------------------------------------------------------------------
+List<LeadCardData> _leads = [];
 
-class Lead {
-  final String company;
-  final String contactName;
-  final String email;
-  final String tradeshow;
-  final double score;
-  final Color cardColor;
-  final Color indicatorColor;
-
-  const Lead({
-    required this.company,
-    required this.contactName,
-    required this.email,
-    required this.tradeshow,
-    required this.score,
-    required this.cardColor,
-    required this.indicatorColor,
-  });
-}
-
-const List<Lead> _mockLeads = [
-  Lead(
-    company: 'Techno Craft',
-    contactName: 'Daniel Hook',
-    email: 'danielhook@technocraft.com',
-    tradeshow: 'EuroShop 2026',
-    score: 9.5,
-    cardColor: Color(0xFF2C2C2E),
-    indicatorColor: Color(0xFF3B82F6),
-  ),
-  Lead(
-    company: 'Jeson DH',
-    contactName: 'Jasan Mak',
-    email: 'jasan.dh@jasonmak.de',
-    tradeshow: 'DMEXCO 2026',
-    score: 6.6,
-    cardColor: Color(0xFF2563EB),
-    indicatorColor: Color(0xFFEAB308),
-  ),
-];
 
 // ---------------------------------------------------------------------------
 // Design tokens – calibrated to Figma 375 px screen
@@ -61,41 +20,138 @@ const Color _kWhite = Colors.white;
 // ---------------------------------------------------------------------------
 
 class LeadsPage extends StatefulWidget {
-  const LeadsPage({super.key});
+  final AppDatabase database;
+
+  const LeadsPage({
+    super.key,
+    required this.database,
+  });
 
   @override
   State<LeadsPage> createState() => _LeadsPageState();
 }
 
-class _LeadsPageState extends State<LeadsPage> {
-  final TextEditingController _searchController = TextEditingController();
-  String _activeFilter = 'Company';
+class _FilterChipButton extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
 
-  List<Lead> get _filteredLeads {
-    final query = _searchController.text.trim().toLowerCase();
-
-    if (query.isEmpty) {
-      return _mockLeads;
-    }
-
-    return _mockLeads.where((lead) {
-      if (_activeFilter == 'Company') {
-        return lead.company.toLowerCase().contains(query);
-      }
-
-      if (_activeFilter == 'Tradeshow') {
-        return lead.tradeshow.toLowerCase().contains(query);
-      }
-
-      return false;
-    }).toList();
-  }
+  const _FilterChipButton({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
 
   @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          color: isActive ? _kAccent : _kWhite,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isActive ? _kAccent : const Color(0xFFD1D5DB),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.tune_rounded,
+              size: 13,
+              color: isActive ? _kWhite : _kSubtle,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: isActive ? _kWhite : _kLabel,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LeadsPageState extends State<LeadsPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  bool _companyFilterActive = true;
+  bool _tradeshowFilterActive = false;
+    
+  List<String> _suggestions = [];
+  List<LeadCardData> _leads = [];
+  int _convertedLeadCount = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLeads();
+}
+
+@override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }  
+
+  Future<void> _loadLeads() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  final query = _searchController.text.trim();
+
+  final result = await widget.database.getLeadCards(
+    search: query.isNotEmpty &&
+            !_companyFilterActive &&
+            !_tradeshowFilterActive
+        ? query
+        : null,
+    company: query.isNotEmpty && _companyFilterActive ? query : null,
+    tradeShowName: query.isNotEmpty && _tradeshowFilterActive ? query : null,
+  );
+
+  final convertedCount = await widget.database.getConvertedLeadCount();
+
+  setState(() {
+    _leads = result;
+    _convertedLeadCount = convertedCount;
+    _isLoading = false;
+  });
+}
+
+Future<void> _loadSuggestions(String input) async {
+  final query = input.trim();
+
+  if (query.isEmpty) {
+    setState(() {
+      _suggestions = [];
+    });
+    await _loadLeads();
+    return;
   }
+
+  final suggestions = await widget.database.getLeadSearchSuggestions(
+    query: query,
+    includeCompanies: _companyFilterActive,
+    includeTradeShows: _tradeshowFilterActive,
+  );
+
+  setState(() {
+    _suggestions = suggestions;
+  });
+}
+
+
 
   void _onExport() {
     // TODO: implement export
@@ -105,9 +161,10 @@ class _LeadsPageState extends State<LeadsPage> {
     // TODO: navigate to create lead screen
   }
 
-  void _onLeadTap(Lead lead) {
-    // TODO: navigate to lead detail screen
-  }
+  void _onLeadTap(LeadCardData leadData) {
+  debugPrint('Open lead with id: ${leadData.lead.id}');
+  // TODO: navigate to lead detail screen
+}
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +182,7 @@ class _LeadsPageState extends State<LeadsPage> {
               _buildStatusRow(),
               const SizedBox(height: 14),
               _buildSearchBar(),
+              _buildSuggestions(),
               const SizedBox(height: 12),
               _buildFilterRow(),
               const SizedBox(height: 16),
@@ -135,6 +193,50 @@ class _LeadsPageState extends State<LeadsPage> {
       ),
     );
   }
+
+ // ── Suggestion ──────────────────────────────────────────────────────────────
+
+Widget _buildSuggestions() {
+  if (_suggestions.isEmpty) {
+    return const SizedBox.shrink();
+  }
+
+  return Container(
+    margin: const EdgeInsets.only(top: 6),
+    decoration: BoxDecoration(
+      color: _kWhite,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.06),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      children: _suggestions.map((suggestion) {
+        return ListTile(
+          dense: true,
+          title: Text(
+            suggestion,
+            style: const TextStyle(
+              fontSize: 14,
+              color: _kLabel,
+            ),
+          ),
+          onTap: () {
+            _searchController.text = suggestion;
+            setState(() {
+              _suggestions = [];
+            });
+            _loadLeads();
+          },
+        );
+      }).toList(),
+    ),
+  );
+}
 
   // ── Header ──────────────────────────────────────────────────────────────
 
@@ -213,8 +315,14 @@ class _LeadsPageState extends State<LeadsPage> {
           Expanded(
             child: TextField(
               controller: _searchController,
-              onChanged: (_) {
-                setState(() {});
+              onChanged: (value) {
+                _loadSuggestions(value);
+              },
+              onSubmitted: (_) {
+                setState(() {
+                  _suggestions = [];
+                });
+                _loadLeads();
               },
               style: const TextStyle(fontSize: 14, color: _kLabel),
               decoration: const InputDecoration(
@@ -224,7 +332,7 @@ class _LeadsPageState extends State<LeadsPage> {
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
-            ),
+            )
           ),
           const Padding(
             padding: EdgeInsets.only(right: 12),
@@ -235,59 +343,52 @@ class _LeadsPageState extends State<LeadsPage> {
     );
   }
 
+  
+
   // ── Filter chips ────────────────────────────────────────────────────────
 
   Widget _buildFilterRow() {
-    const filters = ['Company', 'Tradeshow'];
-    return Row(
-      children: filters.map((f) {
-        final sel = _activeFilter == f;
-        return Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: GestureDetector(
-            onTap: () => setState(() => _activeFilter = f),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-              decoration: BoxDecoration(
-                color: sel ? _kAccent : _kWhite,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: sel ? _kAccent : const Color(0xFFD1D5DB),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.tune_rounded,
-                    size: 13,
-                    color: sel ? _kWhite : _kSubtle,
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    f,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: sel ? _kWhite : _kLabel,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
+  return Row(
+    children: [
+      _FilterChipButton(
+        label: 'Company',
+        isActive: _companyFilterActive,
+        onTap: () {
+          setState(() {
+            _companyFilterActive = !_companyFilterActive;
+          });
 
-  // ── Lead list ───────────────────────────────────────────────────────────
+          _loadSuggestions(_searchController.text);
+          _loadLeads();
+        },
+      ),
+      const SizedBox(width: 8),
+      _FilterChipButton(
+        label: 'Tradeshow',
+        isActive: _tradeshowFilterActive,
+        onTap: () {
+          setState(() {
+            _tradeshowFilterActive = !_tradeshowFilterActive;
+          });
+
+          _loadSuggestions(_searchController.text);
+          _loadLeads();
+        },
+      ),
+    ],
+  );
+}
+
+// ── Lead list ───────────────────────────────────────────────────────────
 
   Widget _buildLeadList() {
-    final leads = _filteredLeads;
+    if(_isLoading){
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
-    if (leads.isEmpty) {
+    if (_leads.isEmpty) {
       return const Center(
         child: Text(
           'No leads found',
@@ -301,11 +402,11 @@ class _LeadsPageState extends State<LeadsPage> {
 
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 20),
-      itemCount: leads.length,
+      itemCount: _leads.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, i) => _LeadCard(
-        lead: leads[i],
-        onTap: () => _onLeadTap(leads[i]),
+        leadData: _leads[i],
+        onTap: () => _onLeadTap(_leads[i]),
       ),
     );
   }
@@ -349,12 +450,19 @@ class _CircleIconBtn extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _LeadCard extends StatelessWidget {
-  final Lead lead;
+  final LeadCardData leadData;
   final VoidCallback onTap;
-  const _LeadCard({required this.lead, required this.onTap});
+
+  const _LeadCard({
+    required this.leadData,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final lead = leadData.lead;
+    final contact = leadData.contact;
+
     final scoreParts = lead.score.toStringAsFixed(1).split('.');
 
     return GestureDetector(
@@ -364,7 +472,9 @@ class _LeadCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.fromLTRB(18, 22, 18, 16),
           decoration: BoxDecoration(
-            color: lead.cardColor,
+            color: lead.status.name == 'converted'
+            ? const Color(0xFF2C2C2E)
+            : _kAccent,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -380,7 +490,7 @@ class _LeadCard extends StatelessWidget {
                     decPart: scoreParts[1],
                   ),
                   const Spacer(),
-                  _IndicatorDots(color: lead.indicatorColor),
+                  _IndicatorDots(color: lead.status.name == 'converted' ? _kAccent : _kYellow),
                 ],
               ),
 
@@ -397,7 +507,7 @@ class _LeadCard extends StatelessWidget {
                       children: [
                         // Company name
                         Text(
-                          lead.company,
+                          contact.company,
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -430,7 +540,7 @@ class _LeadCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${lead.contactName} •',
+                                    '${'${contact.firstName} ${contact.lastName}'} •',
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
@@ -439,7 +549,7 @@ class _LeadCard extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    lead.email,
+                                    contact.email,
                                     style: TextStyle(
                                       fontSize: 10.5,
                                       color: Colors.white.withValues(alpha: 0.55),
