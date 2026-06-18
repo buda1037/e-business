@@ -29,45 +29,68 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            if (index == 1 || index == 3) {
-              ScaffoldMessenger.of(context)
-                ..removeCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text('Oops! This page is not implemented yet.'),
-                  ),
-                );
-              return; // Return early so currentPageIndex doesn't update
+      bottomNavigationBar: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          backgroundColor: Colors.white, 
+          indicatorColor: const Color(0xFFF3EDFA), // Soft purple pill background
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const TextStyle(
+                color: Color(0xFF6236E2), // Deep purple text
+                fontWeight: FontWeight.bold,
+              );
             }
-            currentPageIndex = index;
-          });
-        },
-        selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: FaIcon(FontAwesomeIcons.house),
-            icon: FaIcon(FontAwesomeIcons.house),
-            label: 'Dashboard',
-          ),
-          NavigationDestination(
-            selectedIcon: FaIcon(FontAwesomeIcons.calendar),
-            icon: FaIcon(FontAwesomeIcons.calendar),
-            label: 'Tradeshows',
-          ),
-          NavigationDestination(
-            selectedIcon: FaIcon(FontAwesomeIcons.bullhorn),
-            icon: FaIcon(FontAwesomeIcons.bullhorn),
-            label: 'Leads',
-          ),
-          NavigationDestination(
-            selectedIcon: FaIcon(FontAwesomeIcons.user),
-            icon: FaIcon(FontAwesomeIcons.user),
-            label: 'Profile',
-          ),
-        ],
+            return const TextStyle(color: Colors.transparent); 
+          }),
+          iconTheme: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const IconThemeData(color: Color(0xFF6236E2)); // Deep purple icon
+            }
+            return const IconThemeData(color: Color(0xFF9BB0C1)); // Muted blue/grey icon
+          }),
+        ),
+        child: NavigationBar(
+          // Corrected enum name:
+          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          selectedIndex: currentPageIndex,
+          onDestinationSelected: (int index) {
+            setState(() {
+              if (index == 1 || index == 3) {
+                ScaffoldMessenger.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text('Oops! This page is not implemented yet.'),
+                    ),
+                  );
+                return;
+              }
+              currentPageIndex = index;
+            });
+          },
+          destinations: const <Widget>[
+            NavigationDestination(
+              selectedIcon: FaIcon(FontAwesomeIcons.houseUser), 
+              icon: FaIcon(FontAwesomeIcons.house),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              selectedIcon: FaIcon(FontAwesomeIcons.wallet),
+              icon: FaIcon(FontAwesomeIcons.wallet),
+              label: 'Tradeshows',
+            ),
+            NavigationDestination(
+              selectedIcon: FaIcon(FontAwesomeIcons.chartPie),
+              icon: FaIcon(FontAwesomeIcons.chartPie),
+              label: 'Leads',
+            ),
+            NavigationDestination(
+              selectedIcon: FaIcon(FontAwesomeIcons.user),
+              icon: FaIcon(FontAwesomeIcons.user),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
       body: pages[currentPageIndex],
     );
