@@ -32,6 +32,16 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
+            if (index == 1 || index == 3) {
+              ScaffoldMessenger.of(context)
+                ..removeCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text('Oops! This page is not implemented yet.'),
+                  ),
+                );
+              return; // Return early so currentPageIndex doesn't update
+            }
             currentPageIndex = index;
           });
         },
