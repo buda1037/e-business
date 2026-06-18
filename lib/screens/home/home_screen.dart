@@ -4,15 +4,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:leaddesk/database/database.dart';
 import 'package:leaddesk/screens/home/dashboard/dashboard_page.dart';
 import 'package:leaddesk/screens/home/leads/leads_page.dart';
-import 'package:leaddesk/screens/home/not-implemented/not_implemented_page.dart';
+import 'package:leaddesk/screens/home/profile/profile_page.dart';
+import 'package:leaddesk/screens/home/tradeshows/tradeshow_page.dart';
 
 class HomeScreen extends StatefulWidget {
   final AppDatabase database;
 
-  const HomeScreen({
-    super.key,
-    required this.database,
-  });
+  const HomeScreen({super.key, required this.database});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -25,9 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final pages = <Widget>[
       const DashboardPage(),
-      const NotImplementedPage(),
+      const TradeshowPage(),
       LeadsPage(database: widget.database),
-      const NotImplementedPage(),
+      const ProfilePage(),
     ];
 
     return Scaffold(
