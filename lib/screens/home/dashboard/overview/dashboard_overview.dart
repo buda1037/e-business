@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:leaddesk/screens/home/dashboard/metrics/widgets/ai_request_statistics_button.dart';
-import 'package:leaddesk/screens/home/dashboard/metrics/widgets/leads_clients_cr_card.dart';
+import 'package:leaddesk/screens/home/dashboard/overview/widgets/ai_request_statistics_button.dart';
+import 'package:leaddesk/screens/home/dashboard/overview/widgets/leads_clients_cr_card.dart';
 
-class DashboardMetrics extends StatelessWidget {
-  const DashboardMetrics({super.key});
+class DashboardOverview extends StatelessWidget {
+  const DashboardOverview({super.key});
 
   @override
   Widget build(BuildContext context) {
