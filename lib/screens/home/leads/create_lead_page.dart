@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:leaddesk/database/database.dart';
+import 'package:leaddesk/database/tables.dart';
 // ---------------------------------------------------------------------------
 // Design tokens – kept in sync with leads_page.dart
 // ---------------------------------------------------------------------------
@@ -18,7 +20,12 @@ const Color _kGreen = Color(0xFF22C55E);
 // ---------------------------------------------------------------------------
 
 class CreateLeadPage extends StatefulWidget {
-  const CreateLeadPage({super.key});
+  final AppDatabase database;
+
+  const CreateLeadPage({
+    super.key,
+    required this.database,
+  });
 
   @override
   State<CreateLeadPage> createState() => _CreateLeadPageState();
@@ -32,6 +39,7 @@ class _CreateLeadPageState extends State<CreateLeadPage> {
   final TextEditingController _tradeshowController = TextEditingController();
   final TextEditingController _dealVolumeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _companyController = TextEditingController();
 
   // Optional fields
   final TextEditingController _phoneController = TextEditingController();
@@ -41,6 +49,7 @@ class _CreateLeadPageState extends State<CreateLeadPage> {
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _companyController.dispose();
     _productController.dispose();
     _tradeshowController.dispose();
     _dealVolumeController.dispose();
@@ -54,39 +63,115 @@ class _CreateLeadPageState extends State<CreateLeadPage> {
     Navigator.of(context).maybePop();
   }
 
-  void _onCreateLead() {
-    final mandatoryFields = <String, TextEditingController>{
-      'First name': _firstNameController,
-      'Last name': _lastNameController,
-      'Product': _productController,
-      'Tradeshow': _tradeshowController,
-      'Deal volume': _dealVolumeController,
-      'E-mail': _emailController,
-    };
+  Future<void> _onCreateLead() async {
+  final mandatoryFields = <String, TextEditingController>{
+    'First name': _firstNameController,
+    'Last name': _lastNameController,
+    'Company': _companyController,
+    'Product': _productController,
+    'Tradeshow': _tradeshowController,
+    'Deal volume': _dealVolumeController,
+    'E-mail': _emailController,
+  };
 
-    final missing = mandatoryFields.entries
-        .where((entry) => entry.value.text.trim().isEmpty)
-        .map((entry) => entry.key)
-        .toList();
+  final missing = mandatoryFields.entries
+      .where((entry) => entry.value.text.trim().isEmpty)
+      .map((entry) => entry.key)
+      .toList();
 
-    if (missing.isNotEmpty) {
+  if (missing.isNotEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Please fill in: ${missing.join(', ')}'),
+        backgroundColor: _kRed,
+      ),
+    );
+    return;
+  }
+
+  final rawVolume = _dealVolumeController.text
+      .trim()
+      .replaceAll('.', '')
+      .replaceAll(',', '.')
+      .replaceAll('€', '')
+      .trim();
+
+  final volume = double.tryParse(rawVolume);
+
+  if (volume == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please enter a valid deal volume'),
+        backgroundColor: _kRed,
+      ),
+    );
+    return;
+  }
+
+  try {
+    final productName = _productController.text.trim();
+    final tradeShowName = _tradeshowController.text.trim();
+
+    final product = await widget.database.getProductByName(productName);
+    final tradeShow = await widget.database.getTradeShowByName(tradeShowName);
+
+    if (product == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please fill in: ${missing.join(', ')}'),
+          content: Text('Product "$productName" does not exist.'),
           backgroundColor: _kRed,
         ),
       );
       return;
     }
 
-    // TODO: connect to backend / database
+    if (tradeShow == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Tradeshow "$tradeShowName" does not exist.'),
+          backgroundColor: _kRed,
+        ),
+      );
+      return;
+    }
+
+    await widget.database.createFullLead(
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
+      email: _emailController.text.trim(),
+      company: _companyController.text.trim(),
+      productId: product.id,
+      tradeShowId: tradeShow.id,
+      ownerId: 1,
+      status: LeadStatus.newLead,
+      score: 0.0,
+      volume: volume,
+      notes: _notesController.text.trim().isEmpty
+          ? null
+          : _notesController.text.trim(),
+    );
+
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Lead created'),
         backgroundColor: _kGreen,
       ),
     );
+
+    Navigator.of(context).pop(true);
+  } catch (error) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Could not create lead: $error'),
+        backgroundColor: _kRed,
+      ),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +207,12 @@ class _CreateLeadPageState extends State<CreateLeadPage> {
                         label: 'Last name',
                         hint: 'e.g. Gant',
                         controller: _lastNameController,
+                      ),
+                      const SizedBox(height: 14),
+                      _LabeledField(
+                        label: 'Company',
+                        hint: 'e.g. SAP',
+                        controller: _companyController,
                       ),
                       const SizedBox(height: 14),
                       _LabeledField(

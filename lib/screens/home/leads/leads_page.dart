@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:leaddesk/database/database.dart';
-<<<<<<< HEAD
 import 'package:leaddesk/screens/home/leads/create_lead_page.dart';
 
-=======
+
 
 List<LeadCardData> _leads = [];
-
->>>>>>> eae511c (Add database seed data and lead search filters)
 
 // ---------------------------------------------------------------------------
 // Design tokens – calibrated to Figma 375 px screen
@@ -93,7 +90,7 @@ class _LeadsPageState extends State<LeadsPage> {
     
   List<String> _suggestions = [];
   List<LeadCardData> _leads = [];
-  // int _convertedLeadCount = 0;
+  int _convertedLeadCount = 0;
   bool _isLoading = true;
 
   @override
@@ -125,11 +122,11 @@ class _LeadsPageState extends State<LeadsPage> {
     tradeShowName: query.isNotEmpty && _tradeshowFilterActive ? query : null,
   );
 
-  // final convertedCount = await widget.database.getConvertedLeadCount();
+  final convertedCount = await widget.database.getConvertedLeadCount();
 
   setState(() {
     _leads = result;
-    // _convertedLeadCount = convertedCount;
+    _convertedLeadCount = convertedCount;
     _isLoading = false;
   });
 }
@@ -162,13 +159,19 @@ Future<void> _loadSuggestions(String input) async {
     // TODO: implement export
   }
 
-  void _onAddLead() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const CreateLeadPage(),
+  Future<void> _onAddLead() async {
+  final created = await Navigator.of(context).push<bool>(
+    MaterialPageRoute(
+      builder: (context) => CreateLeadPage(
+        database: widget.database,
       ),
-    );
+    ),
+  );
+
+  if (created == true) {
+    await _loadLeads();
   }
+}
 
   void _onLeadTap(LeadCardData leadData) {
   debugPrint('Open lead with id: ${leadData.lead.id}');
@@ -294,10 +297,10 @@ Widget _buildSuggestions() {
           ),
         ),
         const Spacer(),
-        const Text(
-          '5 leads',
-          style: TextStyle(fontSize: 13, color: _kSubtle),
-        ),
+          Text(
+            '$_convertedLeadCount leads',
+            style: const TextStyle(fontSize: 13, color: _kSubtle),
+          ),
       ],
     );
   }

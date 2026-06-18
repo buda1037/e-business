@@ -528,6 +528,27 @@ class AppDatabase extends _$AppDatabase {
 
   return suggestions.take(5).toList();
 }
+
+
+Future<Product?> getProductByName(String name) async {
+  final cleanName = name.trim();
+
+  final result = await (select(products)
+        ..where((tbl) => tbl.name.equals(cleanName)))
+      .getSingleOrNull();
+
+  return result;
+}
+
+Future<TradeShow?> getTradeShowByName(String name) async {
+  final cleanName = name.trim();
+
+  final result = await (select(tradeShows)
+        ..where((tbl) => tbl.name.equals(cleanName)))
+      .getSingleOrNull();
+
+  return result;
+}
 }
 
 // -------------------------
