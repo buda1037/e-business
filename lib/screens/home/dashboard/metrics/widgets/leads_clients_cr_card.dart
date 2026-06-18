@@ -42,13 +42,16 @@ class LeadsClientsCrCards extends StatelessWidget {
   }
 
   Widget _buildValueSection() {
-    return Text(
-      keyFigureValue,
-      style: GoogleFonts.inter(
-        fontSize: 38,
-        fontWeight: FontWeight.w800,
-        color: _primaryDarkColor,
-        height: 1.1,
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(
+        keyFigureValue,
+        style: GoogleFonts.inter(
+          fontSize: 38,
+          fontWeight: FontWeight.w800,
+          color: _primaryDarkColor,
+          height: 1.1,
+        ),
       ),
     );
   }
