@@ -80,8 +80,6 @@ class _CreateLeadPageState extends State<CreateLeadPage> {
     }
 
     // TODO: connect to backend / database
-    print('Lead created');
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Lead created'),

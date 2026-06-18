@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:leaddesk/database/database.dart';
 import 'package:leaddesk/screens/home/leads/create_lead_page.dart';
 
-List<LeadCardData> _leads = [];
-
 
 // ---------------------------------------------------------------------------
 // Design tokens – calibrated to Figma 375 px screen
@@ -89,7 +87,7 @@ class _LeadsPageState extends State<LeadsPage> {
     
   List<String> _suggestions = [];
   List<LeadCardData> _leads = [];
-  int _convertedLeadCount = 0;
+  // int _convertedLeadCount = 0;
   bool _isLoading = true;
 
   @override
@@ -121,11 +119,11 @@ class _LeadsPageState extends State<LeadsPage> {
     tradeShowName: query.isNotEmpty && _tradeshowFilterActive ? query : null,
   );
 
-  final convertedCount = await widget.database.getConvertedLeadCount();
+  // final convertedCount = await widget.database.getConvertedLeadCount();
 
   setState(() {
     _leads = result;
-    _convertedLeadCount = convertedCount;
+    // _convertedLeadCount = convertedCount;
     _isLoading = false;
   });
 }
