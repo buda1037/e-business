@@ -16,15 +16,10 @@ Future<void> main() async {
 class MainApp extends StatelessWidget {
   final AppDatabase database;
 
-  const MainApp({
-    super.key,
-    required this.database,
-  });
+  const MainApp({super.key, required this.database});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SplashScreen(database: database),
-    );
+    return MaterialApp(home: SplashScreen(database: database));
   }
 }

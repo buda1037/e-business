@@ -8,7 +8,7 @@ class TradeshowItem {
   final int count;
   final String conversions;
   final bool isTrendUp; // True for green up-arrow, false for orange down-arrow
-  final Widget logo;    // A placeholder container for the logos in this demo
+  final Widget logo; // A placeholder container for the logos in this demo
 
   const TradeshowItem({
     required this.title,
@@ -39,7 +39,15 @@ class TradeshowTab extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           alignment: Alignment.center,
-          child: const Text('CF', style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, fontSize: 18)),
+          child: const Text(
+            'CF',
+            style: TextStyle(
+              color: Colors.white,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
       TradeshowItem(
@@ -51,7 +59,8 @@ class TradeshowTab extends StatelessWidget {
         logo: Center(
           child: Image.network(
             'https://pub.dev/static/img/flutter-logo.png', // Fallback placeholder or use an asset icon
-            errorBuilder: (c, e, s) => const Icon(Icons.star, color: Colors.red, size: 28),
+            errorBuilder: (c, e, s) =>
+                const Icon(Icons.star, color: Colors.red, size: 28),
           ),
         ),
       ),
@@ -67,7 +76,15 @@ class TradeshowTab extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           alignment: Alignment.center,
-          child: const Text('CF', style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, fontSize: 18)),
+          child: const Text(
+            'CF',
+            style: TextStyle(
+              color: Colors.white,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
       TradeshowItem(
@@ -82,29 +99,30 @@ class TradeshowTab extends StatelessWidget {
 
     return ListView.separated(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(), // Flows perfectly within your main Dashboard Column
+      physics:
+          const NeverScrollableScrollPhysics(), // Flows perfectly within your main Dashboard Column
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       itemCount: tradeshows.length,
       separatorBuilder: (context, index) => const SizedBox(height: 24),
       itemBuilder: (context, index) {
         final item = tradeshows[index];
-        
+
         // Colors mapping directly to the mockup visuals
-        final trendColor = item.isTrendUp ? const Color(0xFF25DB61) : const Color(0xFFDB5225);
-        final trendIcon = item.isTrendUp ? Icons.trending_up : Icons.trending_down;
+        final trendColor = item.isTrendUp
+            ? const Color(0xFF25DB61)
+            : const Color(0xFFDB5225);
+        final trendIcon = item.isTrendUp
+            ? Icons.trending_up
+            : Icons.trending_down;
 
         return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Left Side: Rounded Square Logo Container
-            SizedBox(
-              width: 52,
-              height: 52,
-              child: item.logo,
-            ),
-            
+            SizedBox(width: 52, height: 52, child: item.logo),
+
             const SizedBox(width: 16),
-            
+
             // Middle Column: Title & Year
             Expanded(
               child: Column(
@@ -131,7 +149,7 @@ class TradeshowTab extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Right Column: Counts & Conversion Trends
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,

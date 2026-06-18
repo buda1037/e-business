@@ -1,11 +1,6 @@
 import 'package:drift/drift.dart';
 
-enum LeadStatus {
-  newLead,
-  qualified,
-  converted,
-  lost,
-}
+enum LeadStatus { newLead, qualified, converted, lost }
 
 class Contacts extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -42,9 +37,7 @@ class TradeShows extends Table {
 class Users extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  IntColumn get managerId => integer()
-      .nullable()
-      .references(Users, #id)();
+  IntColumn get managerId => integer().nullable().references(Users, #id)();
 
   TextColumn get email => text().unique()();
 

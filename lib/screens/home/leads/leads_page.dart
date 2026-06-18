@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:leaddesk/database/database.dart';
 import 'package:leaddesk/screens/home/leads/create_lead_page.dart';
 
-
-
 List<LeadCardData> _leads = [];
 
 // ---------------------------------------------------------------------------
@@ -24,10 +22,7 @@ const Color _kWhite = Colors.white;
 class LeadsPage extends StatefulWidget {
   final AppDatabase database;
 
-  const LeadsPage({
-    super.key,
-    required this.database,
-  });
+  const LeadsPage({super.key, required this.database});
 
   @override
   State<LeadsPage> createState() => _LeadsPageState();
@@ -87,7 +82,7 @@ class _LeadsPageState extends State<LeadsPage> {
 
   bool _companyFilterActive = true;
   bool _tradeshowFilterActive = false;
-    
+
   List<String> _suggestions = [];
   List<LeadCardData> _leads = [];
   int _convertedLeadCount = 0;
@@ -97,86 +92,81 @@ class _LeadsPageState extends State<LeadsPage> {
   void initState() {
     super.initState();
     _loadLeads();
-}
+  }
 
-@override
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }  
-
-  Future<void> _loadLeads() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  final query = _searchController.text.trim();
-
-  final result = await widget.database.getLeadCards(
-    search: query.isNotEmpty &&
-            !_companyFilterActive &&
-            !_tradeshowFilterActive
-        ? query
-        : null,
-    company: query.isNotEmpty && _companyFilterActive ? query : null,
-    tradeShowName: query.isNotEmpty && _tradeshowFilterActive ? query : null,
-  );
-
-  final convertedCount = await widget.database.getConvertedLeadCount();
-
-  setState(() {
-    _leads = result;
-    _convertedLeadCount = convertedCount;
-    _isLoading = false;
-  });
-}
-
-Future<void> _loadSuggestions(String input) async {
-  final query = input.trim();
-
-  if (query.isEmpty) {
-    setState(() {
-      _suggestions = [];
-    });
-    await _loadLeads();
-    return;
   }
 
-  final suggestions = await widget.database.getLeadSearchSuggestions(
-    query: query,
-    includeCompanies: _companyFilterActive,
-    includeTradeShows: _tradeshowFilterActive,
-  );
+  Future<void> _loadLeads() async {
+    setState(() {
+      _isLoading = true;
+    });
 
-  setState(() {
-    _suggestions = suggestions;
-  });
-}
+    final query = _searchController.text.trim();
 
+    final result = await widget.database.getLeadCards(
+      search:
+          query.isNotEmpty && !_companyFilterActive && !_tradeshowFilterActive
+          ? query
+          : null,
+      company: query.isNotEmpty && _companyFilterActive ? query : null,
+      tradeShowName: query.isNotEmpty && _tradeshowFilterActive ? query : null,
+    );
 
+    final convertedCount = await widget.database.getConvertedLeadCount();
+
+    setState(() {
+      _leads = result;
+      _convertedLeadCount = convertedCount;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _loadSuggestions(String input) async {
+    final query = input.trim();
+
+    if (query.isEmpty) {
+      setState(() {
+        _suggestions = [];
+      });
+      await _loadLeads();
+      return;
+    }
+
+    final suggestions = await widget.database.getLeadSearchSuggestions(
+      query: query,
+      includeCompanies: _companyFilterActive,
+      includeTradeShows: _tradeshowFilterActive,
+    );
+
+    setState(() {
+      _suggestions = suggestions;
+    });
+  }
 
   void _onExport() {
     // TODO: implement export
   }
 
   Future<void> _onAddLead() async {
-  final created = await Navigator.of(context).push<bool>(
-    MaterialPageRoute(
-      builder: (context) => CreateLeadPage(
-        database: widget.database,
+    final created = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => CreateLeadPage(database: widget.database),
       ),
-    ),
-  );
+    );
 
-  if (created == true) {
-    await _loadLeads();
+    if (created == true) {
+      await _loadLeads();
+    }
   }
-}
 
   void _onLeadTap(LeadCardData leadData) {
-  debugPrint('Open lead with id: ${leadData.lead.id}');
-  // TODO: navigate to lead detail screen
-}
+    debugPrint('Open lead with id: ${leadData.lead.id}');
+    // TODO: navigate to lead detail screen
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,49 +196,46 @@ Future<void> _loadSuggestions(String input) async {
     );
   }
 
- // ── Suggestion ──────────────────────────────────────────────────────────────
+  // ── Suggestion ──────────────────────────────────────────────────────────────
 
-Widget _buildSuggestions() {
-  if (_suggestions.isEmpty) {
-    return const SizedBox.shrink();
-  }
+  Widget _buildSuggestions() {
+    if (_suggestions.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
-  return Container(
-    margin: const EdgeInsets.only(top: 6),
-    decoration: BoxDecoration(
-      color: _kWhite,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.06),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Column(
-      children: _suggestions.map((suggestion) {
-        return ListTile(
-          dense: true,
-          title: Text(
-            suggestion,
-            style: const TextStyle(
-              fontSize: 14,
-              color: _kLabel,
-            ),
+    return Container(
+      margin: const EdgeInsets.only(top: 6),
+      decoration: BoxDecoration(
+        color: _kWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
-          onTap: () {
-            _searchController.text = suggestion;
-            setState(() {
-              _suggestions = [];
-            });
-            _loadLeads();
-          },
-        );
-      }).toList(),
-    ),
-  );
-}
+        ],
+      ),
+      child: Column(
+        children: _suggestions.map((suggestion) {
+          return ListTile(
+            dense: true,
+            title: Text(
+              suggestion,
+              style: const TextStyle(fontSize: 14, color: _kLabel),
+            ),
+            onTap: () {
+              _searchController.text = suggestion;
+              setState(() {
+                _suggestions = [];
+              });
+              _loadLeads();
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
 
   // ── Header ──────────────────────────────────────────────────────────────
 
@@ -297,10 +284,10 @@ Widget _buildSuggestions() {
           ),
         ),
         const Spacer(),
-          Text(
-            '$_convertedLeadCount leads',
-            style: const TextStyle(fontSize: 13, color: _kSubtle),
-          ),
+        Text(
+          '$_convertedLeadCount leads',
+          style: const TextStyle(fontSize: 13, color: _kSubtle),
+        ),
       ],
     );
   }
@@ -344,7 +331,7 @@ Widget _buildSuggestions() {
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
-            )
+            ),
           ),
           const Padding(
             padding: EdgeInsets.only(right: 12),
@@ -355,59 +342,52 @@ Widget _buildSuggestions() {
     );
   }
 
-  
-
   // ── Filter chips ────────────────────────────────────────────────────────
 
   Widget _buildFilterRow() {
-  return Row(
-    children: [
-      _FilterChipButton(
-        label: 'Company',
-        isActive: _companyFilterActive,
-        onTap: () {
-          setState(() {
-            _companyFilterActive = !_companyFilterActive;
-          });
+    return Row(
+      children: [
+        _FilterChipButton(
+          label: 'Company',
+          isActive: _companyFilterActive,
+          onTap: () {
+            setState(() {
+              _companyFilterActive = !_companyFilterActive;
+            });
 
-          _loadSuggestions(_searchController.text);
-          _loadLeads();
-        },
-      ),
-      const SizedBox(width: 8),
-      _FilterChipButton(
-        label: 'Tradeshow',
-        isActive: _tradeshowFilterActive,
-        onTap: () {
-          setState(() {
-            _tradeshowFilterActive = !_tradeshowFilterActive;
-          });
+            _loadSuggestions(_searchController.text);
+            _loadLeads();
+          },
+        ),
+        const SizedBox(width: 8),
+        _FilterChipButton(
+          label: 'Tradeshow',
+          isActive: _tradeshowFilterActive,
+          onTap: () {
+            setState(() {
+              _tradeshowFilterActive = !_tradeshowFilterActive;
+            });
 
-          _loadSuggestions(_searchController.text);
-          _loadLeads();
-        },
-      ),
-    ],
-  );
-}
+            _loadSuggestions(_searchController.text);
+            _loadLeads();
+          },
+        ),
+      ],
+    );
+  }
 
-// ── Lead list ───────────────────────────────────────────────────────────
+  // ── Lead list ───────────────────────────────────────────────────────────
 
   Widget _buildLeadList() {
-    if(_isLoading){
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_leads.isEmpty) {
       return const Center(
         child: Text(
           'No leads found',
-          style: TextStyle(
-            fontSize: 14,
-            color: _kSubtle,
-          ),
+          style: TextStyle(fontSize: 14, color: _kSubtle),
         ),
       );
     }
@@ -416,10 +396,8 @@ Widget _buildSuggestions() {
       padding: const EdgeInsets.only(bottom: 20),
       itemCount: _leads.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, i) => _LeadCard(
-        leadData: _leads[i],
-        onTap: () => _onLeadTap(_leads[i]),
-      ),
+      itemBuilder: (context, i) =>
+          _LeadCard(leadData: _leads[i], onTap: () => _onLeadTap(_leads[i])),
     );
   }
 }
@@ -465,10 +443,7 @@ class _LeadCard extends StatelessWidget {
   final LeadCardData leadData;
   final VoidCallback onTap;
 
-  const _LeadCard({
-    required this.leadData,
-    required this.onTap,
-  });
+  const _LeadCard({required this.leadData, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -485,8 +460,8 @@ class _LeadCard extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(18, 22, 18, 16),
           decoration: BoxDecoration(
             color: lead.status.name == 'converted'
-            ? const Color(0xFF2C2C2E)
-            : _kAccent,
+                ? const Color(0xFF2C2C2E)
+                : _kAccent,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -497,12 +472,13 @@ class _LeadCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Score: number left, "Score" label top-right of number
-                  _ScoreBlock(
-                    intPart: scoreParts[0],
-                    decPart: scoreParts[1],
-                  ),
+                  _ScoreBlock(intPart: scoreParts[0], decPart: scoreParts[1]),
                   const Spacer(),
-                  _IndicatorDots(color: lead.status.name == 'converted' ? _kAccent : _kYellow),
+                  _IndicatorDots(
+                    color: lead.status.name == 'converted'
+                        ? _kAccent
+                        : _kYellow,
+                  ),
                 ],
               ),
 
@@ -564,7 +540,9 @@ class _LeadCard extends StatelessWidget {
                                     contact.email,
                                     style: TextStyle(
                                       fontSize: 10.5,
-                                      color: Colors.white.withValues(alpha: 0.55),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.55,
+                                      ),
                                       height: 1.3,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -686,10 +664,7 @@ class _IndicatorDots extends StatelessWidget {
             child: Container(
               width: r,
               height: r,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
           ),
         ],
@@ -746,14 +721,7 @@ class _WaveTopClipper extends CustomClipper<Path> {
 
     // Top edge: gentle concave arc (wave dip in the upper-middle)
     final double midX = size.width / 2;
-    path.cubicTo(
-      midX * 0.35,
-      0,
-      midX * 0.35,
-      waveDepth,
-      midX,
-      waveDepth,
-    );
+    path.cubicTo(midX * 0.35, 0, midX * 0.35, waveDepth, midX, waveDepth);
     path.cubicTo(
       midX + midX * 0.35,
       waveDepth,
@@ -785,10 +753,7 @@ class _WaveTopClipper extends CustomClipper<Path> {
 
     // Left edge → top-left corner
     path.lineTo(0, radius);
-    path.arcToPoint(
-      Offset(radius, 0),
-      radius: const Radius.circular(radius),
-    );
+    path.arcToPoint(Offset(radius, 0), radius: const Radius.circular(radius));
 
     path.close();
     return path;

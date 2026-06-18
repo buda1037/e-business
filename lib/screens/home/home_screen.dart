@@ -31,8 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          backgroundColor: Colors.white, 
-          indicatorColor: const Color(0xFFF3EDFA), // Soft purple pill background
+          backgroundColor: Colors.white,
+          indicatorColor: const Color(
+            0xFFF3EDFA,
+          ), // Soft purple pill background
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return const TextStyle(
@@ -40,13 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontWeight: FontWeight.bold,
               );
             }
-            return const TextStyle(color: Colors.transparent); 
+            return const TextStyle(color: Colors.transparent);
           }),
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return const IconThemeData(color: Color(0xFF6236E2)); // Deep purple icon
+              return const IconThemeData(
+                color: Color(0xFF6236E2),
+              ); // Deep purple icon
             }
-            return const IconThemeData(color: Color(0xFF9BB0C1)); // Muted blue/grey icon
+            return const IconThemeData(
+              color: Color(0xFF9BB0C1),
+            ); // Muted blue/grey icon
           }),
         ),
         child: NavigationBar(
@@ -70,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           destinations: const <Widget>[
             NavigationDestination(
-              selectedIcon: FaIcon(FontAwesomeIcons.houseUser), 
+              selectedIcon: FaIcon(FontAwesomeIcons.houseUser),
               icon: FaIcon(FontAwesomeIcons.house),
               label: 'Home',
             ),

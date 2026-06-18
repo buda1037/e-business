@@ -8,10 +8,7 @@ class OverviewTab extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Center(
-        child: Image.asset(
-          'assets/images/overview.png',
-          fit: BoxFit.contain,
-        ),
+        child: Image.asset('assets/images/overview.png', fit: BoxFit.contain),
       ),
     );
   }

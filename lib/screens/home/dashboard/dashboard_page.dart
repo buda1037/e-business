@@ -16,12 +16,7 @@ class DashboardPage extends StatelessWidget {
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: DashboardAppBar(),
-          body: Column(
-            children: [
-              DashboardMetrics(),
-              DashboardTabs()
-            ],
-          ),
+          body: Column(children: [DashboardMetrics(), DashboardTabs()]),
         ),
       ],
     );

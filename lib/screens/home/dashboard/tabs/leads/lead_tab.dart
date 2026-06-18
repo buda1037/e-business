@@ -24,15 +24,22 @@ class LeadTab extends StatelessWidget {
       const LeadItem(name: 'Daniel Hook', company: 'Techno Craft', score: 9.5),
       const LeadItem(name: 'Jasan Mak', company: 'Jeson DH', score: 6.6),
       const LeadItem(name: 'Max Müller', company: 'Bringe IT', score: 9.7),
-      const LeadItem(name: 'Cristina Neamtu', company: 'Nexus Corp', score: 8.9),
+      const LeadItem(
+        name: 'Cristina Neamtu',
+        company: 'Nexus Corp',
+        score: 8.9,
+      ),
     ];
 
     return ListView.separated(
-      shrinkWrap: true, // Crucial! Allows it to live inside your parent Dashboard Column safely
-      physics: const NeverScrollableScrollPhysics(), // Let the main dashboard handle the outer scrolling
+      shrinkWrap:
+          true, // Crucial! Allows it to live inside your parent Dashboard Column safely
+      physics:
+          const NeverScrollableScrollPhysics(), // Let the main dashboard handle the outer scrolling
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       itemCount: leads.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 24), // Space between rows
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: 24), // Space between rows
       itemBuilder: (context, index) {
         final lead = leads[index];
         return Row(
@@ -52,9 +59,8 @@ class LeadTab extends StatelessWidget {
                 color: Color(0xFF1E293B), // Dark silhouette matching your image
               ),
             ),
-            
+
             const SizedBox(width: 16), // Space between avatar and text
-            
             // Middle Column: Name and Company
             Expanded(
               child: Column(
@@ -81,14 +87,16 @@ class LeadTab extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Right Side: The Green Score Indicator
             Text(
               '${lead.score} Score',
               style: GoogleFonts.poppins(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF25DB61), // Bright vibrant green matching the image
+                color: Color(
+                  0xFF25DB61,
+                ), // Bright vibrant green matching the image
               ),
             ),
           ],

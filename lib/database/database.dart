@@ -6,15 +6,7 @@ import 'package:leaddesk/database/tables.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(
-  tables: [
-    Contacts,
-    Products,
-    TradeShows,
-    Users,
-    Leads,
-  ],
-)
+@DriftDatabase(tables: [Contacts, Products, TradeShows, Users, Leads])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
@@ -133,9 +125,9 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<int> getConvertedLeadCount() async {
-    final convertedLeads = await (select(leads)
-          ..where((tbl) => tbl.status.equalsValue(LeadStatus.converted)))
-        .get();
+    final convertedLeads = await (select(
+      leads,
+    )..where((tbl) => tbl.status.equalsValue(LeadStatus.converted))).get();
 
     return convertedLeads.length;
   }
@@ -155,13 +147,13 @@ class AppDatabase extends _$AppDatabase {
     final start = DateTime(year, 1, 1);
     final end = DateTime(year + 1, 1, 1);
 
-    final result = await (select(leads)
-          ..where(
-            (tbl) =>
-                tbl.createdAt.isBiggerOrEqualValue(start) &
-                tbl.createdAt.isSmallerThanValue(end),
-          ))
-        .get();
+    final result =
+        await (select(leads)..where(
+              (tbl) =>
+                  tbl.createdAt.isBiggerOrEqualValue(start) &
+                  tbl.createdAt.isSmallerThanValue(end),
+            ))
+            .get();
 
     return result.length;
   }
@@ -170,14 +162,14 @@ class AppDatabase extends _$AppDatabase {
     final start = DateTime(year, 1, 1);
     final end = DateTime(year + 1, 1, 1);
 
-    final result = await (select(leads)
-          ..where(
-            (tbl) =>
-                tbl.status.equalsValue(LeadStatus.converted) &
-                tbl.createdAt.isBiggerOrEqualValue(start) &
-                tbl.createdAt.isSmallerThanValue(end),
-          ))
-        .get();
+    final result =
+        await (select(leads)..where(
+              (tbl) =>
+                  tbl.status.equalsValue(LeadStatus.converted) &
+                  tbl.createdAt.isBiggerOrEqualValue(start) &
+                  tbl.createdAt.isSmallerThanValue(end),
+            ))
+            .get();
 
     return result.length;
   }
@@ -199,13 +191,13 @@ class AppDatabase extends _$AppDatabase {
         ? DateTime(year + 1, 1, 1)
         : DateTime(year, month + 1, 1);
 
-    final result = await (select(leads)
-          ..where(
-            (tbl) =>
-                tbl.createdAt.isBiggerOrEqualValue(start) &
-                tbl.createdAt.isSmallerThanValue(end),
-          ))
-        .get();
+    final result =
+        await (select(leads)..where(
+              (tbl) =>
+                  tbl.createdAt.isBiggerOrEqualValue(start) &
+                  tbl.createdAt.isSmallerThanValue(end),
+            ))
+            .get();
 
     return result.length;
   }
@@ -216,14 +208,14 @@ class AppDatabase extends _$AppDatabase {
         ? DateTime(year + 1, 1, 1)
         : DateTime(year, month + 1, 1);
 
-    final result = await (select(leads)
-          ..where(
-            (tbl) =>
-                tbl.status.equalsValue(LeadStatus.converted) &
-                tbl.createdAt.isBiggerOrEqualValue(start) &
-                tbl.createdAt.isSmallerThanValue(end),
-          ))
-        .get();
+    final result =
+        await (select(leads)..where(
+              (tbl) =>
+                  tbl.status.equalsValue(LeadStatus.converted) &
+                  tbl.createdAt.isBiggerOrEqualValue(start) &
+                  tbl.createdAt.isSmallerThanValue(end),
+            ))
+            .get();
 
     return result.length;
   }
@@ -244,66 +236,61 @@ class AppDatabase extends _$AppDatabase {
   // -------------------------
 
   Future<List<LeadCardData>> getLeadCards({
-  String? search,
-  String? company,
-  String? tradeShowName,
-  int? tradeShowId,
-}) async {
-  final query = select(leads).join([
-    innerJoin(contacts, contacts.id.equalsExp(leads.contactId)),
-    innerJoin(products, products.id.equalsExp(leads.productId)),
-    innerJoin(tradeShows, tradeShows.id.equalsExp(leads.tradeShowId)),
-    innerJoin(users, users.id.equalsExp(leads.ownerId)),
-  ]);
+    String? search,
+    String? company,
+    String? tradeShowName,
+    int? tradeShowId,
+  }) async {
+    final query = select(leads).join([
+      innerJoin(contacts, contacts.id.equalsExp(leads.contactId)),
+      innerJoin(products, products.id.equalsExp(leads.productId)),
+      innerJoin(tradeShows, tradeShows.id.equalsExp(leads.tradeShowId)),
+      innerJoin(users, users.id.equalsExp(leads.ownerId)),
+    ]);
 
-  final filters = <Expression<bool>>[];
+    final filters = <Expression<bool>>[];
 
-  if (search != null && search.trim().isNotEmpty) {
-  final searchValue = '%${search.trim()}%';
+    if (search != null && search.trim().isNotEmpty) {
+      final searchValue = '%${search.trim()}%';
 
-  final fullNameExpression = contacts.firstName + const Constant(' ') + contacts.lastName;
+      final fullNameExpression =
+          contacts.firstName + const Constant(' ') + contacts.lastName;
 
-  filters.add(
-    contacts.firstName.like(searchValue) |
-        contacts.lastName.like(searchValue) |
-        fullNameExpression.like(searchValue),
-  );
-}
+      filters.add(
+        contacts.firstName.like(searchValue) |
+            contacts.lastName.like(searchValue) |
+            fullNameExpression.like(searchValue),
+      );
+    }
 
-  if (company != null && company.trim().isNotEmpty) {
-    filters.add(
-      contacts.company.like('%${company.trim()}%'),
-    );
+    if (company != null && company.trim().isNotEmpty) {
+      filters.add(contacts.company.like('%${company.trim()}%'));
+    }
+
+    if (tradeShowName != null && tradeShowName.trim().isNotEmpty) {
+      filters.add(tradeShows.name.like('%${tradeShowName.trim()}%'));
+    }
+
+    if (filters.isNotEmpty) {
+      query.where(filters.reduce((value, element) => value | element));
+    }
+
+    if (tradeShowId != null) {
+      query.where(leads.tradeShowId.equals(tradeShowId));
+    }
+
+    final rows = await query.get();
+
+    return rows.map((row) {
+      return LeadCardData(
+        lead: row.readTable(leads),
+        contact: row.readTable(contacts),
+        product: row.readTable(products),
+        tradeShow: row.readTable(tradeShows),
+        owner: row.readTable(users),
+      );
+    }).toList();
   }
-
-  if (tradeShowName != null && tradeShowName.trim().isNotEmpty) {
-    filters.add(
-      tradeShows.name.like('%${tradeShowName.trim()}%'),
-    );
-  }
-
-  if (filters.isNotEmpty) {
-    query.where(
-      filters.reduce((value, element) => value | element),
-    );
-  }
-
-  if (tradeShowId != null) {
-    query.where(leads.tradeShowId.equals(tradeShowId));
-  }
-
-  final rows = await query.get();
-
-  return rows.map((row) {
-    return LeadCardData(
-      lead: row.readTable(leads),
-      contact: row.readTable(contacts),
-      product: row.readTable(products),
-      tradeShow: row.readTable(tradeShows),
-      owner: row.readTable(users),
-    );
-  }).toList();
-}
 
   Future<LeadCardData?> getLeadDetails(int leadId) async {
     final query = select(leads).join([
@@ -483,72 +470,73 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<String>> getLeadSearchSuggestions({
-  required String query,
-  required bool includeCompanies,
-  required bool includeTradeShows,
-}) async {
-  final trimmedQuery = query.trim();
+    required String query,
+    required bool includeCompanies,
+    required bool includeTradeShows,
+  }) async {
+    final trimmedQuery = query.trim();
 
-  if (trimmedQuery.isEmpty) {
-    return [];
+    if (trimmedQuery.isEmpty) {
+      return [];
+    }
+
+    final searchValue = '%$trimmedQuery%';
+    final suggestions = <String>{};
+
+    if (includeCompanies) {
+      final companyRows = await (select(
+        contacts,
+      )..where((tbl) => tbl.company.like(searchValue))).get();
+
+      suggestions.addAll(companyRows.map((contact) => contact.company));
+    }
+
+    if (includeTradeShows) {
+      final tradeShowRows = await (select(
+        tradeShows,
+      )..where((tbl) => tbl.name.like(searchValue))).get();
+
+      suggestions.addAll(tradeShowRows.map((tradeShow) => tradeShow.name));
+    }
+
+    if (!includeCompanies && !includeTradeShows) {
+      final contactRows =
+          await (select(contacts)..where(
+                (tbl) =>
+                    tbl.firstName.like(searchValue) |
+                    tbl.lastName.like(searchValue),
+              ))
+              .get();
+
+      suggestions.addAll(
+        contactRows.map(
+          (contact) => '${contact.firstName} ${contact.lastName}',
+        ),
+      );
+    }
+
+    return suggestions.take(5).toList();
   }
 
-  final searchValue = '%$trimmedQuery%';
-  final suggestions = <String>{};
+  Future<Product?> getProductByName(String name) async {
+    final cleanName = name.trim();
 
-  if (includeCompanies) {
-    final companyRows = await (select(contacts)
-          ..where((tbl) => tbl.company.like(searchValue)))
-        .get();
+    final result = await (select(
+      products,
+    )..where((tbl) => tbl.name.equals(cleanName))).getSingleOrNull();
 
-    suggestions.addAll(companyRows.map((contact) => contact.company));
+    return result;
   }
 
-  if (includeTradeShows) {
-    final tradeShowRows = await (select(tradeShows)
-          ..where((tbl) => tbl.name.like(searchValue)))
-        .get();
+  Future<TradeShow?> getTradeShowByName(String name) async {
+    final cleanName = name.trim();
 
-    suggestions.addAll(tradeShowRows.map((tradeShow) => tradeShow.name));
+    final result = await (select(
+      tradeShows,
+    )..where((tbl) => tbl.name.equals(cleanName))).getSingleOrNull();
+
+    return result;
   }
-
-  if (!includeCompanies && !includeTradeShows) {
-    final contactRows = await (select(contacts)
-          ..where(
-            (tbl) =>
-                tbl.firstName.like(searchValue) |
-                tbl.lastName.like(searchValue),
-          ))
-        .get();
-
-    suggestions.addAll(
-      contactRows.map((contact) => '${contact.firstName} ${contact.lastName}'),
-    );
-  }
-
-  return suggestions.take(5).toList();
-}
-
-
-Future<Product?> getProductByName(String name) async {
-  final cleanName = name.trim();
-
-  final result = await (select(products)
-        ..where((tbl) => tbl.name.equals(cleanName)))
-      .getSingleOrNull();
-
-  return result;
-}
-
-Future<TradeShow?> getTradeShowByName(String name) async {
-  final cleanName = name.trim();
-
-  final result = await (select(tradeShows)
-        ..where((tbl) => tbl.name.equals(cleanName)))
-      .getSingleOrNull();
-
-  return result;
-}
 }
 
 // -------------------------

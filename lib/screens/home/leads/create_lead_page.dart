@@ -22,10 +22,7 @@ const Color _kGreen = Color(0xFF22C55E);
 class CreateLeadPage extends StatefulWidget {
   final AppDatabase database;
 
-  const CreateLeadPage({
-    super.key,
-    required this.database,
-  });
+  const CreateLeadPage({super.key, required this.database});
 
   @override
   State<CreateLeadPage> createState() => _CreateLeadPageState();
@@ -64,114 +61,111 @@ class _CreateLeadPageState extends State<CreateLeadPage> {
   }
 
   Future<void> _onCreateLead() async {
-  final mandatoryFields = <String, TextEditingController>{
-    'First name': _firstNameController,
-    'Last name': _lastNameController,
-    'Company': _companyController,
-    'Product': _productController,
-    'Tradeshow': _tradeshowController,
-    'Deal volume': _dealVolumeController,
-    'E-mail': _emailController,
-  };
+    final mandatoryFields = <String, TextEditingController>{
+      'First name': _firstNameController,
+      'Last name': _lastNameController,
+      'Company': _companyController,
+      'Product': _productController,
+      'Tradeshow': _tradeshowController,
+      'Deal volume': _dealVolumeController,
+      'E-mail': _emailController,
+    };
 
-  final missing = mandatoryFields.entries
-      .where((entry) => entry.value.text.trim().isEmpty)
-      .map((entry) => entry.key)
-      .toList();
+    final missing = mandatoryFields.entries
+        .where((entry) => entry.value.text.trim().isEmpty)
+        .map((entry) => entry.key)
+        .toList();
 
-  if (missing.isNotEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Please fill in: ${missing.join(', ')}'),
-        backgroundColor: _kRed,
-      ),
-    );
-    return;
-  }
-
-  final rawVolume = _dealVolumeController.text
-      .trim()
-      .replaceAll('.', '')
-      .replaceAll(',', '.')
-      .replaceAll('€', '')
-      .trim();
-
-  final volume = double.tryParse(rawVolume);
-
-  if (volume == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please enter a valid deal volume'),
-        backgroundColor: _kRed,
-      ),
-    );
-    return;
-  }
-
-  try {
-    final productName = _productController.text.trim();
-    final tradeShowName = _tradeshowController.text.trim();
-
-    final product = await widget.database.getProductByName(productName);
-    final tradeShow = await widget.database.getTradeShowByName(tradeShowName);
-
-    if (product == null) {
+    if (missing.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Product "$productName" does not exist.'),
+          content: Text('Please fill in: ${missing.join(', ')}'),
           backgroundColor: _kRed,
         ),
       );
       return;
     }
 
-    if (tradeShow == null) {
+    final rawVolume = _dealVolumeController.text
+        .trim()
+        .replaceAll('.', '')
+        .replaceAll(',', '.')
+        .replaceAll('€', '')
+        .trim();
+
+    final volume = double.tryParse(rawVolume);
+
+    if (volume == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Tradeshow "$tradeShowName" does not exist.'),
+        const SnackBar(
+          content: Text('Please enter a valid deal volume'),
           backgroundColor: _kRed,
         ),
       );
       return;
     }
 
-    await widget.database.createFullLead(
-      firstName: _firstNameController.text.trim(),
-      lastName: _lastNameController.text.trim(),
-      email: _emailController.text.trim(),
-      company: _companyController.text.trim(),
-      productId: product.id,
-      tradeShowId: tradeShow.id,
-      ownerId: 1,
-      status: LeadStatus.newLead,
-      score: 0.0,
-      volume: volume,
-      notes: _notesController.text.trim().isEmpty
-          ? null
-          : _notesController.text.trim(),
-    );
+    try {
+      final productName = _productController.text.trim();
+      final tradeShowName = _tradeshowController.text.trim();
 
-    if (!mounted) return;
+      final product = await widget.database.getProductByName(productName);
+      final tradeShow = await widget.database.getTradeShowByName(tradeShowName);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Lead created'),
-        backgroundColor: _kGreen,
-      ),
-    );
+      if (product == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Product "$productName" does not exist.'),
+            backgroundColor: _kRed,
+          ),
+        );
+        return;
+      }
 
-    Navigator.of(context).pop(true);
-  } catch (error) {
-    if (!mounted) return;
+      if (tradeShow == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Tradeshow "$tradeShowName" does not exist.'),
+            backgroundColor: _kRed,
+          ),
+        );
+        return;
+      }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Could not create lead: $error'),
-        backgroundColor: _kRed,
-      ),
-    );
+      await widget.database.createFullLead(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        email: _emailController.text.trim(),
+        company: _companyController.text.trim(),
+        productId: product.id,
+        tradeShowId: tradeShow.id,
+        ownerId: 1,
+        status: LeadStatus.newLead,
+        score: 0.0,
+        volume: volume,
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Lead created'), backgroundColor: _kGreen),
+      );
+
+      Navigator.of(context).pop(true);
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not create lead: $error'),
+          backgroundColor: _kRed,
+        ),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -231,8 +225,9 @@ class _CreateLeadPageState extends State<CreateLeadPage> {
                         label: 'Deal Volume',
                         hint: 'e.g. 1.200.000,00 €',
                         controller: _dealVolumeController,
-                        keyboardType:
-                            const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                       ),
                       const SizedBox(height: 14),
                       _LabeledField(
@@ -316,10 +311,7 @@ class _CreateLeadPageState extends State<CreateLeadPage> {
         ),
         child: const Text(
           'Create Lead',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -375,10 +367,7 @@ class _SectionHeader extends StatelessWidget {
         Container(
           width: 10,
           height: 10,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 8),
         Text(

@@ -6,8 +6,6 @@ import 'package:flutter/services.dart';
 import 'database.dart';
 import 'tables.dart';
 
-
-
 class DatabaseSeeder {
   final AppDatabase db;
 
@@ -39,7 +37,9 @@ class DatabaseSeeder {
     for (final item in usersData) {
       final user = item as Map<String, dynamic>;
 
-      await db.into(db.users).insert(
+      await db
+          .into(db.users)
+          .insert(
             UsersCompanion.insert(
               id: Value(user['id'] as int),
               managerId: Value(user['managerId'] as int?),
@@ -58,7 +58,9 @@ class DatabaseSeeder {
     for (final item in productsData) {
       final product = item as Map<String, dynamic>;
 
-      await db.into(db.products).insert(
+      await db
+          .into(db.products)
+          .insert(
             ProductsCompanion.insert(
               id: Value(product['id'] as int),
               name: product['name'] as String,
@@ -71,7 +73,9 @@ class DatabaseSeeder {
     for (final item in tradeShowsData) {
       final tradeShow = item as Map<String, dynamic>;
 
-      await db.into(db.tradeShows).insert(
+      await db
+          .into(db.tradeShows)
+          .insert(
             TradeShowsCompanion.insert(
               id: Value(tradeShow['id'] as int),
               name: tradeShow['name'] as String,
@@ -88,7 +92,9 @@ class DatabaseSeeder {
     for (final item in contactsData) {
       final contact = item as Map<String, dynamic>;
 
-      await db.into(db.contacts).insert(
+      await db
+          .into(db.contacts)
+          .insert(
             ContactsCompanion.insert(
               id: Value(contact['id'] as int),
               firstName: contact['firstName'] as String,
@@ -104,7 +110,9 @@ class DatabaseSeeder {
     for (final item in leadsData) {
       final lead = item as Map<String, dynamic>;
 
-      await db.into(db.leads).insert(
+      await db
+          .into(db.leads)
+          .insert(
             LeadsCompanion.insert(
               contactId: lead['contactId'] as int,
               productId: lead['productId'] as int,

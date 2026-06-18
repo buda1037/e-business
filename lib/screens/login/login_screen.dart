@@ -9,10 +9,7 @@ import 'package:leaddesk/database/database.dart';
 class LoginScreen extends StatelessWidget {
   final AppDatabase database;
 
-  const LoginScreen({
-    super.key,
-    required this.database,
-  });
+  const LoginScreen({super.key, required this.database});
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +35,15 @@ class LoginScreen extends StatelessWidget {
                 decoration: InputDecoration(hintText: 'Password'),
               ),
               FilledButton(
-              onPressed: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomeScreen(database: database),
+                onPressed: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(database: database),
+                  ),
                 ),
+                child: const Text('Sign In'),
               ),
-              child: const Text('Sign In'),
-            ),
-                const SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
