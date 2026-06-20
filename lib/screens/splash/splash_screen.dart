@@ -53,8 +53,8 @@ class _SplashScreenState extends State<SplashScreen>
     // Animation direkt beim Öffnen starten
     _ctrl.forward();
 
-    // Nach 4 Sekunden automatisch zur Login-Seite wechseln
-    Future.delayed(const Duration(seconds: 4), _goToLogin);
+    // Nach 2 Sekunden automatisch zur Login-Seite wechseln
+    Future.delayed(const Duration(seconds: 2), _goToLogin);
   }
 
   @override

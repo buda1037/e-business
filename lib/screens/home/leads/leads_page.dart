@@ -4,10 +4,10 @@ import 'package:leaddesk/screens/home/leads/create_lead_page.dart';
 
 List<LeadCardData> _leads = [];
 
-// ---------------------------------------------------------------------------
-// Design tokens – calibrated to Figma 375 px screen
-// ---------------------------------------------------------------------------
 
+// Design tokens
+
+//Farben für die All-Leads Seite
 const Color _kAccent = Color(0xFF2563EB);
 const Color _kYellow = Color(0xFFEAB308);
 const Color _kBg = Color(0xFFF2F2F7);
@@ -15,9 +15,7 @@ const Color _kLabel = Color(0xFF1C1C1E);
 const Color _kSubtle = Color(0xFF8E8E93);
 const Color _kWhite = Colors.white;
 
-// ---------------------------------------------------------------------------
 // LeadsPage
-// ---------------------------------------------------------------------------
 
 class LeadsPage extends StatefulWidget {
   final AppDatabase database;
@@ -28,6 +26,7 @@ class LeadsPage extends StatefulWidget {
   State<LeadsPage> createState() => _LeadsPageState();
 }
 
+// Button für die beiden Suchfilter Company und Tradeshow
 class _FilterChipButton extends StatelessWidget {
   final String label;
   final bool isActive;
@@ -100,6 +99,8 @@ class _LeadsPageState extends State<LeadsPage> {
     super.dispose();
   }
 
+  // Lädt die Leads aus der lokalen Datenbank.
+  // Je nach aktivem Filter wird nach Firma, Messe oder allgemein gesucht.
   Future<void> _loadLeads() async {
     setState(() {
       _isLoading = true;
@@ -125,6 +126,7 @@ class _LeadsPageState extends State<LeadsPage> {
     });
   }
 
+  // Lädt Vorschläge für die Suche, sobald im Suchfeld etwas eingegeben wird.
   Future<void> _loadSuggestions(String input) async {
     final query = input.trim();
 
@@ -151,6 +153,8 @@ class _LeadsPageState extends State<LeadsPage> {
     // TODO: implement export
   }
 
+  // Öffnet die Seite zum Erstellen eines neuen Leads.
+  // Wenn dort erfolgreich ein Lead angelegt wurde, wird die Liste neu geladen.
   Future<void> _onAddLead() async {
     final created = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -196,7 +200,7 @@ class _LeadsPageState extends State<LeadsPage> {
     );
   }
 
-  // ── Suggestion ──────────────────────────────────────────────────────────────
+  // Vorschlagsliste unter dem Suchfeld
 
   Widget _buildSuggestions() {
     if (_suggestions.isEmpty) {
@@ -237,7 +241,7 @@ class _LeadsPageState extends State<LeadsPage> {
     );
   }
 
-  // ── Header ──────────────────────────────────────────────────────────────
+  // Zeigt den Status und die Anzahl der konvertierten Leads an
 
   Widget _buildHeader() {
     return Row(
@@ -261,7 +265,7 @@ class _LeadsPageState extends State<LeadsPage> {
     );
   }
 
-  // ── Status row ──────────────────────────────────────────────────────────
+  // Umschalten zwischen Suche nach Firma und Suche nach Messe
 
   Widget _buildStatusRow() {
     return Row(
@@ -292,7 +296,7 @@ class _LeadsPageState extends State<LeadsPage> {
     );
   }
 
-  // ── Search bar ──────────────────────────────────────────────────────────
+  //Suchleiste bauen
 
   Widget _buildSearchBar() {
     return Container(
@@ -342,7 +346,7 @@ class _LeadsPageState extends State<LeadsPage> {
     );
   }
 
-  // ── Filter chips ────────────────────────────────────────────────────────
+  // Umschalten zwischen Suche nach Firma und Suche nach Messe
 
   Widget _buildFilterRow() {
     return Row(
@@ -376,7 +380,7 @@ class _LeadsPageState extends State<LeadsPage> {
     );
   }
 
-  // ── Lead list ───────────────────────────────────────────────────────────
+  // Lead liste
 
   Widget _buildLeadList() {
     if (_isLoading) {
@@ -402,10 +406,7 @@ class _LeadsPageState extends State<LeadsPage> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _CircleIconBtn
-// ---------------------------------------------------------------------------
-
+// Runder Icon-Button für Export und neuen Lead
 class _CircleIconBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
@@ -435,9 +436,7 @@ class _CircleIconBtn extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _LeadCard  –  with wave-top ClipPath
-// ---------------------------------------------------------------------------
+// _LeadCard
 
 class _LeadCard extends StatelessWidget {
   final LeadCardData leadData;
@@ -568,10 +567,7 @@ class _LeadCard extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _ScoreBlock  –  "Score" label top-right, big number bottom-left
-// ---------------------------------------------------------------------------
-
+// Anzeige des Scores auf der Lead-Karte
 class _ScoreBlock extends StatelessWidget {
   final String intPart;
   final String decPart;
@@ -608,7 +604,6 @@ class _ScoreBlock extends StatelessWidget {
             ),
           ],
         ),
-        // "Score" label – floated top-right of the number block
         Positioned(
           top: -12,
           right: -28,
@@ -627,10 +622,7 @@ class _ScoreBlock extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _IndicatorDots  –  two overlapping circles, smaller & tighter
-// ---------------------------------------------------------------------------
-
+// Zwei kleine Kreise als optischer Statusindikator
 class _IndicatorDots extends StatelessWidget {
   final Color color;
   const _IndicatorDots({required this.color});
@@ -673,10 +665,7 @@ class _IndicatorDots extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _ArrowBtn  –  circle outline with chevron
-// ---------------------------------------------------------------------------
-
+// Kleiner Pfeil rechts auf der Lead-Karte
 class _ArrowBtn extends StatelessWidget {
   const _ArrowBtn();
 
@@ -704,10 +693,7 @@ class _ArrowBtn extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _WaveTopClipper  –  subtle concave dip on the top edge of each card
-// ---------------------------------------------------------------------------
-
+// Schneidet die obere Kante der Karte leicht wellenförmig aus.
 class _WaveTopClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
