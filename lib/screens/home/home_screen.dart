@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:leaddesk/database/database.dart';
+import 'package:leaddesk/helpers/snackbar_helper.dart';
 import 'package:leaddesk/screens/home/dashboard/dashboard_page.dart';
-import 'package:leaddesk/screens/home/leads/leads_page.dart';
+import 'package:leaddesk/screens/home/leads/lead_page.dart';
 import 'package:leaddesk/screens/home/profile/profile_page.dart';
 import 'package:leaddesk/screens/home/tradeshows/tradeshow_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  final AppDatabase database;
-
-  const HomeScreen({super.key, required this.database});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -24,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final pages = <Widget>[
       const DashboardPage(),
       const TradeshowPage(),
-      LeadsPage(database: widget.database),
+      LeadsPage(),
       const ProfilePage(),
     ];
 
@@ -54,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Color(0xFF9BB0C1),
             ); // Muted blue/grey icon
           }),
+          height: 64,
         ),
         child: NavigationBar(
           // Corrected enum name:
@@ -62,13 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onDestinationSelected: (int index) {
             setState(() {
               if (index == 1 || index == 3) {
-                ScaffoldMessenger.of(context)
-                  ..removeCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text('Oops! This page is not implemented yet.'),
-                    ),
-                  );
+                showNotImplementedSnackBar(context);
                 return;
               }
               currentPageIndex = index;

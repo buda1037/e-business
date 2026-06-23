@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../login/login_screen.dart';
-import '../../database/database.dart';
 
 // farben für den Splash Screen
 const Color _kBg = Color(0xFFFFFFFF);
@@ -9,12 +8,7 @@ const Color _kLabel = Color(0xFF1A1A2E);
 const Color _kSubLabel = Color(0xFF9CA3AF);
 
 class SplashScreen extends StatefulWidget {
-  final AppDatabase database;
-
-  const SplashScreen({
-    super.key,
-    required this.database,
-  });
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -35,20 +29,12 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 900),
     );
 
-    _fade = CurvedAnimation(
-      parent: _ctrl,
-      curve: Curves.easeIn,
-    );
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeIn);
 
     _scale = Tween<double>(
       begin: 0.88,
       end: 1.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _ctrl,
-        curve: Curves.easeOutCubic,
-      ),
-    );
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
 
     // Animation direkt beim Öffnen starten
     _ctrl.forward();
@@ -67,13 +53,9 @@ class _SplashScreenState extends State<SplashScreen>
   void _goToLogin() {
     if (!mounted) return;
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => LoginScreen(
-          database: widget.database,
-        ),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => LoginScreen()));
   }
 
   @override
@@ -140,9 +122,7 @@ class _LogoMark extends StatelessWidget {
     return SizedBox(
       width: total,
       height: total,
-      child: CustomPaint(
-        painter: _CrossPainter(color: _kPurple),
-      ),
+      child: CustomPaint(painter: _CrossPainter(color: _kPurple)),
     );
   }
 }
@@ -150,9 +130,7 @@ class _LogoMark extends StatelessWidget {
 class _CrossPainter extends CustomPainter {
   final Color color;
 
-  const _CrossPainter({
-    required this.color,
-  });
+  const _CrossPainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:leaddesk/screens/home/dashboard/app-bar/dashboard_app_bar.dart';
-import 'package:leaddesk/screens/home/dashboard/background/dashboard_background.dart';
-import 'package:leaddesk/screens/home/dashboard/overview/dashboard_overview.dart';
-import 'package:leaddesk/screens/home/dashboard/tabs/dashboard_tabs.dart';
+import 'package:leaddesk/screens/home/dashboard/widgets/app-bar/dashboard_app_bar.dart';
+import 'package:leaddesk/screens/home/dashboard/widgets/background/dashboard_background.dart';
+import 'package:leaddesk/screens/home/dashboard/widgets/status-bar/dashboard_status_bar.dart';
+import 'package:leaddesk/screens/home/dashboard/widgets/tabs/dashboard_tabs.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -16,7 +16,12 @@ class DashboardPage extends StatelessWidget {
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: DashboardAppBar(),
-          body: Column(children: [DashboardOverview(), DashboardTabs()]),
+          body: Column(
+            children: [
+              DashboardStatusBar(),
+              Expanded(child: DashboardTabs()),
+            ],
+          ),
         ),
       ],
     );

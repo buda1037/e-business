@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:leaddesk/database/database.dart';
 import 'package:leaddesk/database/seed_database.dart';
+import 'package:leaddesk/state/state.dart';
 import 'package:leaddesk/screens/splash/splash_screen.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,16 +12,10 @@ Future<void> main() async {
 
   await DatabaseSeeder(database).seedIfNeeded();
 
-  runApp(MainApp(database: database));
-}
-
-class MainApp extends StatelessWidget {
-  final AppDatabase database;
-
-  const MainApp({super.key, required this.database});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(home: SplashScreen(database: database));
-  }
+  runApp(
+    ChangeNotifierProvider<AppState>(
+      create: (_) => AppState(database),
+      child: MaterialApp(title: "LeadDesk", home: SplashScreen()),
+    ),
+  );
 }

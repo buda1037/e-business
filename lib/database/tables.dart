@@ -17,7 +17,7 @@ class Contacts extends Table {
 class Products extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get name => text().unique()();
+  TextColumn get name => text()();
 }
 
 class TradeShows extends Table {
